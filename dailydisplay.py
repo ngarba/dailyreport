@@ -52,7 +52,7 @@ print("The conditions available are: "
 oreq = input("Enter desired condition: ")
 print("Format is YYYY-MM-DD")
 exdate = input("Enter excluded date: ")
-#fstdate = input("Enter first date: ")
+fstdate = input("Enter first date: ")
 lstdate = input("Enter last date: ")
 
 if req == '':
@@ -61,6 +61,8 @@ if oreq == '':
     oreq = '1'
 if exdate == '':
     exdate = '1917-09-24'
+if fstdate == '':
+    fstdate = '1918-11-19'
 if lstdate == '':
     lstdate = '2077-10-31'
 
@@ -170,23 +172,30 @@ for i in data['entries']:
 #            break
 #        eventd[stamp] += eachtd_f
 #        break
-    if req == '8' or req == '':
-        if opscon == oreq:
-            if stamp not in eventd:
-                eventd[stamp] = 0
-            eventd[stamp] += eachtd_f
-            date = list(eventd.keys())
-            acts = list(eventd.values())
-    else:
-        if activity == req:
-            if stamp not in eventd:
-                eventd[stamp] = 0
-            eventd[stamp] += eachtd_f
-            date = list(eventd.keys())
 
-            acts = list(eventd.values())
-            if stamp == lstdate:
-                break
+'''
+Here is where I'm trying to figure out how to get the start date to work.
+'''
+    while True:
+        stamp != fstdate
+            continue
+            if req == '8' or req == '':
+                if opscon == oreq:
+                    if stamp not in eventd:
+                        eventd[stamp] = 0
+                    eventd[stamp] += eachtd_f
+                    date = list(eventd.keys())
+                    acts = list(eventd.values())
+            else:
+                if activity == req:
+                    if stamp not in eventd:
+                        eventd[stamp] = 0
+                    eventd[stamp] += eachtd_f
+                    date = list(eventd.keys())
+
+                    acts = list(eventd.values())
+                    if stamp == lstdate:
+                        break
 
 
     # Obligatory Print Section
