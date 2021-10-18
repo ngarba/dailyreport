@@ -46,13 +46,14 @@ import pandas as pd
 print("The activities available are: "
     "1:Startup 2:Opening 3:Observing 4:Handover 5:Standby "
     "6:Closing 7:Shutdown 8:NA. \n Enter number of desired activity.")
+print("If you are looking for an operation condition, type 8, or hit Enter.")
 req = input("Enter desired activity: ")
 print("The conditions available are: "
     "1:Normal 2:Weather 3:Technical 4:TestingOP 5:Setup 6:Maintenance 7:IT&C Tests")
+print("If you have requested an activity, type 1, or hit Enter.")
 oreq = input("Enter desired condition: ")
-print("Format is YYYY-MM-DD")
+print("Format is YYYY-MM-DD.")
 exdate = input("Enter excluded date: ")
-fstdate = input("Enter first date: ")
 lstdate = input("Enter last date: ")
 
 if req == '':
@@ -61,8 +62,6 @@ if oreq == '':
     oreq = '1'
 if exdate == '':
     exdate = '1917-09-24'
-if fstdate == '':
-    fstdate = '1918-11-19'
 if lstdate == '':
     lstdate = '2077-10-31'
 
@@ -95,6 +94,7 @@ eventd = dict()
 # dictionaries for getting the total M1 open time
 end = dict()
 beg = dict()
+dtrng = dict()
 # dates for plotting
 dates = list()
 # open time list for plotting when used
@@ -102,7 +102,6 @@ dates = list()
 optime = list()
 act = list()
 act_f = list()
-dtrng = list()
 
 for i in data['entries']:
     # Getting daytoday(unix epoch) to be a timestamp(the key value and date for the x axis
@@ -121,9 +120,6 @@ for i in data['entries']:
     tevent = dt.datetime.strptime(tee, '%H:%M') - dt.datetime.strptime(tes, '%H:%M')
     # Amount of time between the first open and the last close
     topen = dt.datetime.strptime(close, '%H:%M') - dt.datetime.strptime(open, '%H:%M')
-
-    #ttes = dt.datetime.strptime(tes, '%H:%M').time()
-    #ttee = dt.datetime.strptime(tee, '%H:%M').time()
 
     # Conditions
     # 1:Normal 2:Weather 3:Technical 4:TestingOP 5:Setup 6:Maintenance 7:IT&C Tests
@@ -144,10 +140,6 @@ for i in data['entries']:
         exdate = '2021-05-20'
     if stamp == exdate:
         continue
-    #    if stamp not in dtrng:
-    #        dtrng.append(stamp)
-    #    if stamp == lstdate:
-    #        break
 
     if req == 8 or req == '':
         if opscon == oreq:
@@ -161,7 +153,6 @@ for i in data['entries']:
     # for turning the activity time deltas into floating point values for the average
     for td in act:
         eachtd_f = td.total_seconds()
-        act_f.append(eachtd_f)
 
     # For trying to combine the dates and sum the times on the same days
 # for st in dates[3:]:
@@ -173,40 +164,50 @@ for i in data['entries']:
 #        eventd[stamp] += eachtd_f
 #        break
 
-'''
-Here is where I'm trying to figure out how to get the start date to work.
-'''
-    while True:
-        stamp != fstdate
-            continue
-            if req == '8' or req == '':
-                if opscon == oreq:
-                    if stamp not in eventd:
-                        eventd[stamp] = 0
-                    eventd[stamp] += eachtd_f
-                    date = list(eventd.keys())
-                    acts = list(eventd.values())
-            else:
-                if activity == req:
-                    if stamp not in eventd:
-                        eventd[stamp] = 0
-                    eventd[stamp] += eachtd_f
-                    date = list(eventd.keys())
+    if req == '8' or req == '':
+        if opscon == oreq:
+            if stamp not in eventd:
+                eventd[stamp] = 0
+            eventd[stamp] += eachtd_f
+            date = list(eventd.keys())
+            acts = list(eventd.values())
+    else:
+        if activity == req:
+            if stamp not in eventd:
+                eventd[stamp] = 0
+            eventd[stamp] += eachtd_f
+            date = list(eventd.keys())
+            acts = list(eventd.values())
+            if stamp == lstdate:
+                break
 
-                    acts = list(eventd.values())
-                    if stamp == lstdate:
-                        break
+dtrng = eventd
 
+print(dtrng)
+fstdate = input("Enter first date: ")
+for dat in date:
+    if fstdate == '':
+        fstdate = dat
+        break
 
-    # Obligatory Print Section
-    # print(stamp)
-    # print(opscon)
-    # print(activity)
+for dkey in list(dtrng):
+    if dkey != fstdate:
+        del dtrng[dkey]
+    else:
+        if dkey == fstdate:
+            break
+
+date = list(dtrng.keys())
+acts = list(dtrng.values())
+
+# Obligatory Print Section
+# print(stamp)
+# print(opscon)
+# print(activity)
 # print(date)
 # print(acts)
-print(eventd)
-print(len(eventd))
-print(acts)
+#print(eventd)
+
 
 # plot
 time = [i.seconds for i in act]
