@@ -27,7 +27,18 @@ use topen when I start working on that
 start and end date working
 weather conditions - weather loss
 
+%2021-10-19
+Try to make dates more robust
+    by making it such that if invalid date is entered, code goes to next valid date
+Combine events like Start and Open
 
+%2021-10-21
+For Robust Dates: If a date entered doesn't exist, it is created and inserted into the dictionary, then sorted.
+If it's created, this means its value is inherently zero, so a portion of script was written to delete this
+    new value afterward.
+My reasoning was that by simply trying to make it check for the next date up or down it could continue running
+    into an issue where the next date up or down does not exist.
+This solution bypasses that problem.
 
 '''
 
@@ -41,6 +52,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
+from collections import OrderedDict
 
 # Activity input
 print("The activities available are: "
@@ -54,7 +66,7 @@ print("If you have requested an activity, type 1, or hit Enter.")
 oreq = input("Enter desired condition: ")
 print("Format is YYYY-MM-DD.")
 exdate = input("Enter excluded date: ")
-lstdate = input("Enter last date: ")
+#lstdate = input("Enter last date: ")
 
 if req == '':
     req = '8'
@@ -62,8 +74,8 @@ if oreq == '':
     oreq = '1'
 if exdate == '':
     exdate = '1917-09-24'
-if lstdate == '':
-    lstdate = '2077-10-31'
+#if lstdate == '':
+#    lstdate = '2077-10-31'
 
 # Activity dictionary
 title = {'1': 'Startup', '2': 'Opening', '3': 'Observing',
@@ -154,16 +166,9 @@ for i in data['entries']:
     for td in act:
         eachtd_f = td.total_seconds()
 
-    # For trying to combine the dates and sum the times on the same days
-# for st in dates[3:]:
-#    if activity == req:
-#        if stamp not in eventd and stamp == fstdate:
-#            eventd[stamp] = 0
-#        else:
-#            break
-#        eventd[stamp] += eachtd_f
-#        break
-
+# This section is what sums up the total value (time it took) to execute an activity for each day
+# If date (stamp) isn't in eventd the dictionary, it is added as a key with a value of zero
+# If while iterating the loop comes across the same stamp, it will add its value to the stamp
     if req == '8' or req == '':
         if opscon == oreq:
             if stamp not in eventd:
@@ -178,24 +183,63 @@ for i in data['entries']:
             eventd[stamp] += eachtd_f
             date = list(eventd.keys())
             acts = list(eventd.values())
-            if stamp == lstdate:
-                break
+#            if stamp == lstdate:
+#                break
 
 dtrng = eventd
-
+# This is the start of getting the first date entered to work.
 print(dtrng)
 fstdate = input("Enter first date: ")
-for dat in date:
+# If date isn't entered, the first date of the dataset becomes the fstdate variable
+for dat in dtrng.keys():
     if fstdate == '':
         fstdate = dat
         break
-
+# If fstdate doesn't exist, it is created with a value of 0 then put in the correct place of the dictionary
+# The resultant plot will present data after the fstdate
+if fstdate not in dtrng:
+    print("If this date is not visible in the final plot,"
+          " it is because there are no data for this activity within this dataset.")
+    dtrng[fstdate] = 0
+dtrng = OrderedDict(sorted(dtrng.items()))
+# Dictionary for some reason in python 3 must be a list
+# Allows one to iterate through a dictionary of changing size, which this is doing
+# This code checks if a key date is the fstdate variable. If it's not, it gets rid of the whole key/value pair
 for dkey in list(dtrng):
     if dkey != fstdate:
         del dtrng[dkey]
     else:
         if dkey == fstdate:
             break
+# If the fstdate value is 0, it just deletes that key/value pair
+for ndkey in list(dtrng):
+    if dtrng[fstdate] == 0:
+        del dtrng[ndkey]
+        break
+
+# Now reworking last date such that it works similar to first date
+lstdate = input("Enter last date: ")
+for dat in dtrng.keys():
+    if lstdate == '':
+        lstdate = '2077-05-01'
+        break
+# If entered lstdate doesn't exist, creates lstdate and assigns value of 0
+# The resulting plot will show data before the lstdate
+if lstdate not in dtrng:
+    dtrng[lstdate] = 0
+dtrng = OrderedDict(sorted(dtrng.items()))
+# Checks if iterable in dictionary is in a place before or after lstdate.
+# If iterable is after lstdate, deletes key/value pair.
+for ldkey in list(dtrng):
+    if list(dtrng.keys()).index(ldkey) < list(dtrng.keys()).index(lstdate):
+        continue
+    elif list(dtrng.keys()).index(ldkey) > list(dtrng.keys()).index(lstdate):
+        del dtrng[ldkey]
+# If lstdate value is 0, deletes the key/value pair
+for lndkey in list(dtrng):
+    if lndkey == lstdate and dtrng[lstdate] == 0:
+        del dtrng[lndkey]
+
 
 date = list(dtrng.keys())
 acts = list(dtrng.values())
@@ -206,7 +250,7 @@ acts = list(dtrng.values())
 # print(activity)
 # print(date)
 # print(acts)
-#print(eventd)
+#print(dtrng)
 
 
 # plot
