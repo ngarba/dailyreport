@@ -34,7 +34,7 @@ Combine events like Start and Open
 
 %2021-10-21
 For Robust Dates: If a date entered doesn't exist, it is created and inserted into the dictionary, then sorted.
-If it's created, this means its value is inherently zero, so a portion of script was written to delete this
+If it's created, this means its value is inherently zero, so a portion of script delete this
     new value afterward.
 My reasoning was that by simply trying to make it check for the next date up or down it could continue running
     into an issue where the next date up or down does not exist.
@@ -60,10 +60,14 @@ print("The activities available are: "
     "6:Closing 7:Shutdown 8:NA. \n Enter number of desired activity.")
 print("If you are looking for an operation condition, type 8, or hit Enter.")
 req = input("Enter desired activity: ")
+print("If you are looking for a second activity, enter it now.")
+sreq = input("Enter second desired activity: ")
 print("The conditions available are: "
     "1:Normal 2:Weather 3:Technical 4:TestingOP 5:Setup 6:Maintenance 7:IT&C Tests")
-print("If you have requested an activity, type 1, or hit Enter.")
+print("If you have requested an activity, restart the code and follow the activity prompt.")
 oreq = input("Enter desired condition: ")
+print("If you are looking for a second condition, enter it now.")
+soreq = input("Enter second desired condition: ")
 print("Format is YYYY-MM-DD.")
 exdate = input("Enter excluded date: ")
 #lstdate = input("Enter last date: ")
@@ -136,9 +140,11 @@ for i in data['entries']:
     # Conditions
     # 1:Normal 2:Weather 3:Technical 4:TestingOP 5:Setup 6:Maintenance 7:IT&C Tests
     opscon = (i['fields']['opscondition'])
+    sopscon = (i['fields']['opscondition'])
     # Activity
     # 1:StartingUp 2:Opening 3:Observing 4:HandoverNote 5:StandingBy 6:Closing 7:ShuttingDown 8:NA
     activity = (i['fields']['opsactivity'])
+    sactivity = (i['fields']['opsactivity'])
 
     # for testing how to get time M1 is open
     # if activity == '6':
@@ -146,8 +152,8 @@ for i in data['entries']:
     # if activity == '2':
     #    beg[stamp] = (tee)
 
-    if req == '2' or req == '7':
-        exdate = '2021-07-22'
+#    if req == '2' or req == '7':
+#        exdate = '2021-07-22'
     if req == '1':
         exdate = '2021-05-20'
     if stamp == exdate:
@@ -157,8 +163,14 @@ for i in data['entries']:
         if opscon == oreq:
             dates.append(stamp)
             act.append(tevent)
+        elif sopscon == soreq and soreq != '' and soreq != oreq:
+            dates.append(stamp)
+            act.append(tevent)
     else:
         if activity == req:
+            dates.append(stamp)
+            act.append(tevent)
+        elif sactivity == sreq and sreq != '' and sreq != req:
             dates.append(stamp)
             act.append(tevent)
 
@@ -176,8 +188,21 @@ for i in data['entries']:
             eventd[stamp] += eachtd_f
             date = list(eventd.keys())
             acts = list(eventd.values())
+
+        elif sopscon == soreq and soreq != oreq and soreq != '':
+           if stamp not in eventd:
+               eventd[stamp] = 0
+           eventd[stamp] += eachtd_f
+           date = list(eventd.keys())
+           acts = list(eventd.values())
     else:
         if activity == req:
+            if stamp not in eventd:
+                eventd[stamp] = 0
+            eventd[stamp] += eachtd_f
+            date = list(eventd.keys())
+            acts = list(eventd.values())
+        elif sactivity == sreq and sreq != '' and sreq != req:
             if stamp not in eventd:
                 eventd[stamp] = 0
             eventd[stamp] += eachtd_f
@@ -272,9 +297,21 @@ plt.xticks(rotation=45)
 # This loop takes the title dictionary up top and uses the activity input to add a title
 for key,value in title.items():
     if req == '8':
-        if key == '1' + oreq:
+        if soreq != '' and soreq != oreq:
+            if key == '1' + oreq:
+                newtitle = value
+            if key == '1' + soreq:
+                newtitle = newtitle + ' + ' + value
+                plt.title(newtitle)
+        elif key == '1' + oreq:
             plt.title(value)
     else:
-        if key == req:
+        if sreq != '' and sreq != req:
+            if key == req:
+                newtitle = value
+            if key == sreq:
+                newtitle = newtitle + ' + ' + value
+                plt.title(newtitle)
+        elif key == req:
             plt.title(value)
 plt.show()
