@@ -264,7 +264,7 @@ fstdate = input("Enter first date: ")
 # If date isn't entered, the first date of the dataset becomes the fstdate variable
 for dat in dtrng.keys():
     if fstdate == '':
-        fstdate = '2022-12-07' #dat
+        fstdate = '2023-06-07' #dat
         break
 # If fstdate doesn't exist, it is created with a value of 0 then put in the correct place of the dictionary
 # The resultant plot will present data after the fstdate
@@ -294,7 +294,7 @@ for ndkey in list(dtrng):
 lstdate = input("Enter last date: ")
 for dat in dtrng.keys():
     if lstdate == '':
-        lstdate = '2022-12-30' #'2077-05-01'
+        lstdate = '2023-07-14' #'2077-05-01'
         break
 # If entered lstdate doesn't exist, creates lstdate and assigns value of 0
 # The resulting plot will show data before the lstdate
