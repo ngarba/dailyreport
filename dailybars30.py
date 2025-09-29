@@ -50,7 +50,11 @@ title = {'1': 'Startup', '2': 'Opening', '3': 'WFC Tasks',
          '18': 'Sky Quality Loss'}
 
 # gib
-f = open('activitylogs30.json')
+j = input("What json would you like to analyze? ")
+if j == '':
+    j = 'activitylogs30.json'
+print('Analyzing ' + j)
+f = open(j)
 
 # returns json data as a dictionary
 data = json.load(f)
@@ -325,4 +329,5 @@ else:
     print("Average Time = " + cmeanacts + "(DD, HH:MM:SS).")
 
 #plt.savefig(r'C:')
+
 plt.show()
