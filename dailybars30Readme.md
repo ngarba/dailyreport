@@ -18,7 +18,15 @@ After activities, the conditions prompts will appear. In this case, since an act
 
 <img width="1086" height="302" alt="image" src="https://github.com/user-attachments/assets/68985e90-4cab-409b-9193-cbe25b2985c2" />
 
-Next, Enter a first date. If left blank, it will add a default date that has been set on line 187.
+Next, the script prompts for the name of a json file to be analyzed. If nothing is entered, a default set on line 55 is used.
+
+<img width="810" height="52" alt="image" src="https://github.com/user-attachments/assets/f1ab38b5-4d65-475e-9b57-03f65442ba1d" />
+
+The script confirms the entered json file.
+
+<img width="463" height="44" alt="image" src="https://github.com/user-attachments/assets/a9298b51-c524-43ad-bd56-e37f1157dabc" />
+
+Enter a first date. If left blank, it will add a default date that has been set on line 187.
 
 <img width="798" height="143" alt="image" src="https://github.com/user-attachments/assets/bf292d0b-2144-4344-8f54-1733a13b9425" />
 
